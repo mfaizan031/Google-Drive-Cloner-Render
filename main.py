@@ -11,7 +11,7 @@ CORS(app,
      supports_credentials=True,
      origins=[
          'http://localhost:3000',  # For local development
-         'https://*.netlify.app',  # For Netlify deployments
+         'https://google-drive-cloner-faizan.netlify.app',  # For Netlify deployments
          'https://*.netlify.com'   # Alternative Netlify domain
      ])
 
