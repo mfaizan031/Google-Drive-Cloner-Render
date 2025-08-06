@@ -4,7 +4,7 @@ from flask_cors import CORS
 from drive_api import drive_bp
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'fallback-secret-key-change-in-production')
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'asdf#FGSgvasgf$5$WGT')
 
 # Configure CORS for your Netlify frontend
 CORS(app, 
