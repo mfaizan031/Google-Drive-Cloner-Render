@@ -1,48 +1,64 @@
 import os
 import sys
-
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 
+# Import only the drive blueprint since you're not using user data
+from drive_api import drive_bp
+
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'a_default_secret_key_for_dev_only') # Use env var for secret key
 
-# Enable CORS for all routes
-CORS(app, supports_credentials=True)
+# Use environment variable for secret key (Railway will provide this)
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'fallback-secret-key-change-in-production')
 
-app.register_blueprint(user_bp, url_prefix='/api')
+# Configure CORS to allow all origins
+CORS(app, 
+     supports_credentials=True,
+     origins="*")
+
+# Register only the drive blueprint
 app.register_blueprint(drive_bp, url_prefix='/api')
 
-# Set preferred URL scheme to https for OAuth callbacks
+# Set preferred URL scheme to https for OAuth callbacks (important for Railway)
 app.config['PREFERRED_URL_SCHEME'] = 'https'
 
-# Removed database configuration
-# app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db.init_app(app)
-# with app.app_context():
-#     db.create_all()
+# Health check endpoint
+@app.route('/health')
+def health_check():
+    return {'status': 'Backend is running!', 'version': '1.0', 'environment': 'production'}
 
+# Serve static files and handle SPA routing
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     static_folder_path = app.static_folder
     if static_folder_path is None:
-            return "Static folder not configured", 404
-
+        return "Static folder not configured", 404
+    
+    # Check if the requested file exists
     if path != "" and os.path.exists(os.path.join(static_folder_path, path)):
         return send_from_directory(static_folder_path, path)
     else:
+        # For SPA routing, serve index.html for non-API routes
         index_path = os.path.join(static_folder_path, 'index.html')
         if os.path.exists(index_path):
             return send_from_directory(static_folder_path, 'index.html')
         else:
             return "index.html not found", 404
 
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-
+    # Railway provides the PORT environment variable
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Debug info (will be visible in Railway logs)
+    print(f"GOOGLE_CLIENT_ID: {os.environ.get('GOOGLE_CLIENT_ID', 'Not set')}")
+    print(f"GOOGLE_CLIENT_SECRET: {'Set' if os.environ.get('GOOGLE_CLIENT_SECRET') else 'Not set'}")
+    print(f"FLASK_SECRET_KEY: {'Set' if os.environ.get('FLASK_SECRET_KEY') else 'Using fallback'}")
+    print(f"Running on port: {port}")
+    print(f"Environment: {'Production' if not os.environ.get('FLASK_ENV') == 'development' else 'Development'}")
+    
+    # Railway deployment settings
+    debug_mode = os.environ.get('FLASK_ENV') == 'development'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
