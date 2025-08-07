@@ -199,6 +199,11 @@ def callback():
         
         flow = Flow.from_client_config(CLIENT_SECRETS, SCOPES, state=state)
         flow.redirect_uri = url_for('drive.callback', _external=True)
+
+        # 🔽 Add these debug log lines here
+        logger.info(f"Redirect URI being used: {flow.redirect_uri}")
+        logger.info(f"Authorization response: {request.url}")
+        
         
         authorization_response = request.url
         flow.fetch_token(authorization_response=authorization_response)
