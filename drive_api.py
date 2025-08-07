@@ -204,7 +204,8 @@ def callback():
         logger.info(f"Redirect URI being used: {flow.redirect_uri}")
         logger.info(f"Authorization response: {request.url}")
         
-        
+        print(f"Redirect URI being used: {flow.redirect_uri}")
+
         authorization_response = request.url
         flow.fetch_token(authorization_response=authorization_response)
         
