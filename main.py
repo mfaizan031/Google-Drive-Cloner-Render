@@ -5,8 +5,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 
-# Import only the drive blueprint since you're not using user data
-from drive_api import drive_bp
+# Import your blueprints only if you have them
+# Uncomment the line below if you have a drive_api.py file with drive_bp blueprint
+# from drive_api import drive_bp
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
@@ -18,8 +19,9 @@ CORS(app,
      supports_credentials=True,
      origins="*")
 
-# Register only the drive blueprint
-app.register_blueprint(drive_bp, url_prefix='/api')
+# Register blueprints only if you have them
+# Uncomment the line below if you have a drive_bp blueprint
+# app.register_blueprint(drive_bp, url_prefix='/api')
 
 # Set preferred URL scheme to https for OAuth callbacks (important for Railway)
 app.config['PREFERRED_URL_SCHEME'] = 'https'
