@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge.jsx'
 import { Loader2, Download, FolderOpen, FileText, CheckCircle, AlertCircle } from 'lucide-react'
 import './App.css'
 
-const API_BASE = 'http://localhost:5001/api'
+// Use environment variable for API_BASE
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
 
 function App() {
   const [driveUrl, setDriveUrl] = useState('')
@@ -341,4 +342,5 @@ function App() {
 }
 
 export default App
+
 
