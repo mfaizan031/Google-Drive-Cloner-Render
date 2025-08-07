@@ -26,7 +26,7 @@ CLIENT_SECRETS = {
         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
         "token_uri": "https://oauth2.googleapis.com/token",
         "redirect_uris": [
-            "https://google-drive-cloner-render-production.up.railway.app/api/auth/callback"
+            "https://google-drive-cloner-render-production.up.railway.app/auth/callback"
         ]
     }
 }
